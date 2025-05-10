@@ -1,0 +1,28 @@
+services:
+  lfs-test-server:
+    image: lfs-server:latest
+    container_name: lfs-server
+    ports:
+      - "8080:8080"
+    environment:
+      LFS_LISTEN: "tcp://:8080"
+      LFS_HOST: "localhost:8080"
+      LFS_CONTENTPATH: "data/content"
+      LFS_METADB: "data/lfs.db"
+      LFS_ADMINUSER: "${LFS_ADMINUSER}"
+      LFS_ADMINPASS: "${LFS_ADMINPASS}"
+      LFS_TUSHOST: "http://tusd:1080"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  tusd:
+    image: tusproject/tusd:latest
+    container_name: tusd
+    command: >
+      -upload-dir=/tusd-data
+      -hooks-http=http://lfs-server:8080/hooks
+      -base-path=/files/
+    volumes:
+      - ./data/tusd:/tusd-data
+    restart: unless-stopped

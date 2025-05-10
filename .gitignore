@@ -1,3 +1,6 @@
+.env
+.DS_Store
+data
 dist
 lfs.db
 lfs-test-server
